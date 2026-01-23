@@ -1,9 +1,10 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    `maven-publish`
-    signing
+    alias(libs.plugins.mavenPublish)
 }
 
 group = "io.github.forketyfork"
@@ -39,70 +40,37 @@ kotlin {
     }
 }
 
-val javadocJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-}
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
 
-publishing {
-    publications {
-        withType<MavenPublication> {
-            artifact(javadocJar)
+    coordinates(group.toString(), "compose-ui-test-server", version.toString())
 
-            pom {
-                name.set("Compose UI Test Server")
-                description.set("HTTP server for controlling Compose Desktop applications at runtime, designed for AI coding agents and automation tools")
-                url.set("https://github.com/forketyfork/compose-ui-test-server")
+    pom {
+        name.set("Compose UI Test Server")
+        description.set("HTTP server for controlling Compose Desktop applications at runtime, designed for AI coding agents and automation tools")
+        url.set("https://github.com/forketyfork/compose-ui-test-server")
+        inceptionYear.set("2025")
 
-                licenses {
-                    license {
-                        name.set("MIT License")
-                        url.set("https://opensource.org/licenses/MIT")
-                    }
-                }
-
-                developers {
-                    developer {
-                        id.set("forketyfork")
-                        name.set("Sergei Petunin")
-                        email.set("sergei.petunin@gmail.com")
-                    }
-                }
-
-                scm {
-                    url.set("https://github.com/forketyfork/compose-ui-test-server")
-                    connection.set("scm:git:git://github.com/forketyfork/compose-ui-test-server.git")
-                    developerConnection.set("scm:git:ssh://github.com/forketyfork/compose-ui-test-server.git")
-                }
+        licenses {
+            license {
+                name.set("MIT License")
+                url.set("https://opensource.org/licenses/MIT")
             }
         }
-    }
 
-    repositories {
-        maven {
-            name = "sonatype"
-            val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            val snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
-
-            credentials {
-                username = project.findProperty("ossrhUsername") as String? ?: System.getenv("OSSRH_USERNAME")
-                password = project.findProperty("ossrhPassword") as String? ?: System.getenv("OSSRH_PASSWORD")
+        developers {
+            developer {
+                id.set("forketyfork")
+                name.set("Sergei Petunin")
+                email.set("sergei.petunin@gmail.com")
             }
         }
+
+        scm {
+            url.set("https://github.com/forketyfork/compose-ui-test-server")
+            connection.set("scm:git:git://github.com/forketyfork/compose-ui-test-server.git")
+            developerConnection.set("scm:git:ssh://github.com/forketyfork/compose-ui-test-server.git")
+        }
     }
-}
-
-signing {
-    val signingKey = project.findProperty("signing.key") as String? ?: System.getenv("SIGNING_KEY")
-    val signingPassword = project.findProperty("signing.password") as String? ?: System.getenv("SIGNING_PASSWORD")
-
-    if (signingKey != null && signingPassword != null) {
-        useInMemoryPgpKeys(signingKey, signingPassword)
-    }
-
-    sign(publishing.publications)
-}
-
-tasks.withType<Sign>().configureEach {
-    onlyIf { !version.toString().endsWith("SNAPSHOT") }
 }
