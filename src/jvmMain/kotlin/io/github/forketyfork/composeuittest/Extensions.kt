@@ -3,31 +3,31 @@ package io.github.forketyfork.composeuittest
 import androidx.compose.ui.test.ComposeUiTest
 
 /**
- * System property to enable the UI test server.
- * Set to "true" to enable: `-Dcompose.ui.test.server.enabled=true`
+ * Environment variable to enable the UI test server.
+ * Set to "true" to enable: `COMPOSE_UI_TEST_SERVER_ENABLED=true`
  */
-const val PROPERTY_SERVER_ENABLED = "compose.ui.test.server.enabled"
+const val ENV_SERVER_ENABLED = "COMPOSE_UI_TEST_SERVER_ENABLED"
 
 /**
- * System property to configure the server port.
- * Example: `-Dcompose.ui.test.server.port=8080`
+ * Environment variable to configure the server port.
+ * Example: `COMPOSE_UI_TEST_SERVER_PORT=8080`
  */
-const val PROPERTY_SERVER_PORT = "compose.ui.test.server.port"
+const val ENV_SERVER_PORT = "COMPOSE_UI_TEST_SERVER_PORT"
 
 /**
- * Check if the UI test server is enabled via system property.
+ * Check if the UI test server is enabled via environment variable.
  *
- * @return true if [PROPERTY_SERVER_ENABLED] is set to "true"
+ * @return true if [ENV_SERVER_ENABLED] is set to "true"
  */
-fun isTestServerEnabled(): Boolean = System.getProperty(PROPERTY_SERVER_ENABLED, "false").toBoolean()
+fun isTestServerEnabled(): Boolean = System.getenv(ENV_SERVER_ENABLED)?.toBoolean() ?: false
 
 /**
- * Get the configured server port from system property.
+ * Get the configured server port from environment variable.
  *
  * @param default The default port if not configured
- * @return The port from [PROPERTY_SERVER_PORT] or the default
+ * @return The port from [ENV_SERVER_PORT] or the default
  */
-fun getTestServerPort(default: Int = 54345): Int = System.getProperty(PROPERTY_SERVER_PORT)?.toIntOrNull() ?: default
+fun getTestServerPort(default: Int = 54345): Int = System.getenv(ENV_SERVER_PORT)?.toIntOrNull() ?: default
 
 /**
  * Start a UI test server for this Compose UI test.
@@ -56,13 +56,13 @@ fun ComposeUiTest.startTestServer(
 ): ComposeUiTestServer = ComposeUiTestServer(this, config).start()
 
 /**
- * Conditionally start a UI test server based on system property.
+ * Conditionally start a UI test server based on environment variable.
  *
- * The server is only started if the system property [PROPERTY_SERVER_ENABLED]
+ * The server is only started if the environment variable [ENV_SERVER_ENABLED]
  * is set to "true". This allows the same application binary to run normally
- * or in agent-controlled mode based on JVM arguments.
+ * or in agent-controlled mode based on environment.
  *
- * The port can be configured via [PROPERTY_SERVER_PORT] system property,
+ * The port can be configured via [ENV_SERVER_PORT] environment variable,
  * or falls back to the config value.
  *
  * Example usage in your app:
@@ -70,7 +70,7 @@ fun ComposeUiTest.startTestServer(
  * runComposeUiTest {
  *     setContent { MyApp() }
  *
- *     // Server only starts if -Dcompose.ui.test.server.enabled=true
+ *     // Server only starts if COMPOSE_UI_TEST_SERVER_ENABLED=true
  *     val server = startTestServerIfEnabled()
  *
  *     // Continue with normal app flow...
@@ -80,10 +80,10 @@ fun ComposeUiTest.startTestServer(
  *
  * Run with agent control enabled:
  * ```bash
- * java -Dcompose.ui.test.server.enabled=true -Dcompose.ui.test.server.port=8080 -jar myapp.jar
+ * COMPOSE_UI_TEST_SERVER_ENABLED=true COMPOSE_UI_TEST_SERVER_PORT=8080 java -jar myapp.jar
  * ```
  *
- * @param config Base server configuration (port may be overridden by system property)
+ * @param config Base server configuration (port may be overridden by environment variable)
  * @return The started [ComposeUiTestServer] if enabled, null otherwise
  */
 fun ComposeUiTest.startTestServerIfEnabled(

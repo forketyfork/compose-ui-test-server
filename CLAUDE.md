@@ -19,10 +19,10 @@ compose-ui-test-server is a Kotlin library that enables AI coding agents and aut
 ./gradlew run
 
 # Run with test server enabled (for agent control)
-./gradlew run -Dcompose.ui.test.server.enabled=true
+COMPOSE_UI_TEST_SERVER_ENABLED=true ./gradlew run
 
 # Run with custom port
-./gradlew run -Dcompose.ui.test.server.enabled=true -Dcompose.ui.test.server.port=8080
+COMPOSE_UI_TEST_SERVER_ENABLED=true COMPOSE_UI_TEST_SERVER_PORT=8080 ./gradlew run
 
 # Publish to Maven Central (release only)
 ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
@@ -34,7 +34,7 @@ compose-ui-test-server is a Kotlin library that enables AI coding agents and aut
 
 - **`ComposeUiTestServer`** - Main HTTP server using Ktor/Netty. Takes a `ComposeUiTest` instance and exposes UI operations as HTTP endpoints. Supports registering custom endpoints via `registerEndpoint()`.
 
-- **`runApplication()`** - Zero-configuration launcher that automatically switches between normal desktop mode and agent-controlled mode based on the `-Dcompose.ui.test.server.enabled=true` system property.
+- **`runApplication()`** - Zero-configuration launcher that automatically switches between normal desktop mode and agent-controlled mode based on the `COMPOSE_UI_TEST_SERVER_ENABLED` environment variable.
 
 - **`TestEndpoint`** - Interface for custom endpoints. Implement `Route.configure(composeTest: ComposeUiTest)` to add app-specific shortcuts.
 
@@ -46,7 +46,7 @@ Built-in endpoints are in `endpoint/` package. Each endpoint class implements `T
 
 - `WindowConfig` - Window settings for normal mode (title, dimensions)
 - `ComposeUiTestServerConfig` - Server settings (port, host, enabled endpoints, timeouts)
-- System properties: `compose.ui.test.server.enabled`, `compose.ui.test.server.port`
+- Environment variables: `COMPOSE_UI_TEST_SERVER_ENABLED`, `COMPOSE_UI_TEST_SERVER_PORT`
 
 ### HTTP Endpoints (default port 54345)
 

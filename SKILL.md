@@ -10,7 +10,7 @@ A library that enables AI coding agents to control Compose Desktop applications 
 
 - **Repository**: https://github.com/forketyfork/compose-ui-test-server
 - **Maven Central**: `io.github.forketyfork:compose-ui-test-server`
-- **Current version**: 0.1.0
+- **Current version**: 0.2.0
 
 ## Checking If Already Installed
 
@@ -40,7 +40,7 @@ kotlin {
                 // Existing dependencies...
 
                 // Add these two:
-                implementation("io.github.forketyfork:compose-ui-test-server:0.1.0")
+                implementation("io.github.forketyfork:compose-ui-test-server:0.2.0")
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.uiTest)
             }
@@ -53,7 +53,7 @@ kotlin {
 
 ```toml
 [libraries]
-compose-ui-test-server = { module = "io.github.forketyfork:compose-ui-test-server", version = "0.1.0" }
+compose-ui-test-server = { module = "io.github.forketyfork:compose-ui-test-server", version = "0.2.0" }
 ```
 
 Then reference in `build.gradle.kts`:
@@ -95,7 +95,7 @@ fun main() =
     }
 ```
 
-The app now runs normally by default, but supports agent control when launched with `-Dcompose.ui.test.server.enabled=true`.
+The app now runs normally by default, but supports agent control when launched with `COMPOSE_UI_TEST_SERVER_ENABLED=true`.
 
 ### Step 3: Add test tags to UI elements
 
@@ -126,10 +126,10 @@ TextField(
 ./gradlew run
 
 # Agent-controlled mode (server enabled)
-./gradlew run -Dcompose.ui.test.server.enabled=true
+COMPOSE_UI_TEST_SERVER_ENABLED=true ./gradlew run
 
 # With custom port (default is 54345)
-./gradlew run -Dcompose.ui.test.server.enabled=true -Dcompose.ui.test.server.port=8080
+COMPOSE_UI_TEST_SERVER_ENABLED=true COMPOSE_UI_TEST_SERVER_PORT=8080 ./gradlew run
 ```
 
 ## Verifying the Server
