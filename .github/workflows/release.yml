@@ -34,8 +34,26 @@ jobs:
       - name: Build
         run: ./gradlew build
 
+      - name: Debug signing key format
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        run: |
+          echo "Key length: ${#SIGNING_KEY}"
+          echo "First 50 chars: ${SIGNING_KEY:0:50}"
+          echo "Last 20 chars: ${SIGNING_KEY: -20}"
+          if [[ "$SIGNING_KEY" == *"BEGIN PGP"* ]]; then
+            echo "Key contains PGP header (raw armor format)"
+          else
+            echo "Key does NOT contain PGP header (possibly base64 or stripped)"
+          fi
+          if [[ "$SIGNING_KEY" == *$'\n'* ]]; then
+            echo "Key contains newlines"
+          else
+            echo "Key has no newlines (single line)"
+          fi
+
       - name: Publish to Maven Central
-        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
+        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache --info
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.SONATYPE_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.SONATYPE_PASSWORD }}
