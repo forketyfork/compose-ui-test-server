@@ -20,7 +20,7 @@ This library is designed for **AI coding agents** (like Claude Code) to interact
 
 - HTTP-based control of running Compose Desktop apps
 - Zero-configuration launcher with automatic mode switching
-- Conditional startup via system property (disabled by default)
+- Conditional startup via environment variable (disabled by default)
 - Built-in endpoints for common UI operations
 - Extensible with custom endpoints for app-specific shortcuts
 - Screenshot capture for visual verification
@@ -35,7 +35,7 @@ kotlin {
         @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
         val desktopMain by getting {
             dependencies {
-                implementation("io.github.forketyfork:compose-ui-test-server:0.1.0")
+                implementation("io.github.forketyfork:compose-ui-test-server:0.2.0")
 
                 // Required: Compose UI Test framework
                 implementation(compose.uiTest)
@@ -100,10 +100,10 @@ TextField(
 
 **Agent-controlled mode**:
 ```bash
-./gradlew run -Dcompose.ui.test.server.enabled=true
+COMPOSE_UI_TEST_SERVER_ENABLED=true ./gradlew run
 ```
 
-When the system property is set, your app automatically starts with an HTTP server that agents can use to control the UI.
+When the environment variable is set, your app automatically starts with an HTTP server that agents can use to control the UI.
 
 ### 4. Control via HTTP
 
@@ -139,12 +139,12 @@ curl "http://localhost:54345/captureScreenshot?path=/tmp/current_state.png"
 | `GET /waitForIdle` | Wait for UI to become idle |
 | `GET /captureScreenshot?path=/tmp/screenshot.png` | Capture screenshot to file |
 
-## System Properties
+## Environment Variables
 
-| Property | Description | Default |
+| Variable | Description | Default |
 |----------|-------------|---------|
-| `compose.ui.test.server.enabled` | Enable agent-controlled mode | `false` |
-| `compose.ui.test.server.port` | Server port | `54345` |
+| `COMPOSE_UI_TEST_SERVER_ENABLED` | Enable agent-controlled mode | `false` |
+| `COMPOSE_UI_TEST_SERVER_PORT` | Server port | `54345` |
 
 ## Advanced Configuration
 

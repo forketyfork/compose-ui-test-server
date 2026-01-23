@@ -25,8 +25,9 @@ data class WindowConfig(
 /**
  * Runs a Compose Desktop application with automatic test server support.
  *
- * When `-Dcompose.ui.test.server.enabled=true` is set, the application runs
- * in test mode with an HTTP server that allows coding agents to control the UI.
+ * When `COMPOSE_UI_TEST_SERVER_ENABLED=true` environment variable is set,
+ * the application runs in test mode with an HTTP server that allows
+ * coding agents to control the UI.
  *
  * When disabled (default), the application runs normally in a desktop window.
  *
@@ -45,12 +46,12 @@ data class WindowConfig(
  *
  * Run normally:
  * ```bash
- * java -jar myapp.jar
+ * ./gradlew run
  * ```
  *
  * Run with agent control enabled:
  * ```bash
- * java -Dcompose.ui.test.server.enabled=true -jar myapp.jar
+ * COMPOSE_UI_TEST_SERVER_ENABLED=true ./gradlew run
  * ```
  *
  * @param windowConfig Configuration for the window in normal mode
