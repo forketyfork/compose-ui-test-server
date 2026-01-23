@@ -1,5 +1,10 @@
 # compose-ui-test-server
 
+[![Build status](https://github.com/forketyfork/compose-ui-test-server/actions/workflows/build.yml/badge.svg)](https://github.com/forketyfork/compose-ui-test-server/actions/workflows/build.yml)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Kotlin](https://img.shields.io/badge/language-Kotlin-purple.svg)](https://kotlinlang.org/)
+[![Release](https://img.shields.io/github/v/release/forketyfork/compose-ui-test-server)](https://github.com/forketyfork/compose-ui-test-server/releases)
+
 A library that enables coding agents and automation tools to control Compose Desktop applications at runtime via HTTP. Agents can click buttons, enter text, wait for UI elements, and capture screenshots through simple REST API calls.
 
 ## Use Case

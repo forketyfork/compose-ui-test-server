@@ -4,25 +4,43 @@ description: Control a running Compose Desktop application via HTTP. Use when yo
 argument-hint: "[action] [target]"
 ---
 
-# Compose UI Test Server - Agent Control
+# compose-ui-test-server
 
-This skill enables you to control Compose Desktop applications at runtime via HTTP when `compose-ui-test-server` is integrated.
+A library that enables AI coding agents to control Compose Desktop applications at runtime via HTTP.
 
-## Setting Up a New Project
+- **Repository**: https://github.com/forketyfork/compose-ui-test-server
+- **Maven Central**: `io.github.forketyfork:compose-ui-test-server`
+- **Current version**: 0.1.0
 
-To add agent control capabilities to a Compose Desktop project:
+## Checking If Already Installed
 
-### 1. Add the dependency
+Before setting up, check if the project already has the library:
 
-In the app's `build.gradle.kts`, add to the desktop source set:
+```bash
+grep -r "compose-ui-test-server\|composeuittest" --include="*.gradle*" --include="*.kt" .
+```
+
+Look for:
+- Dependency on `io.github.forketyfork:compose-ui-test-server`
+- Imports from `io.github.forketyfork.composeuittest`
+
+If found, skip to [Starting the Application](#starting-the-application).
+
+## Installing in a Compose Desktop Project
+
+### Step 1: Add the dependency
+
+Find the app's `build.gradle.kts` and locate the desktop source set dependencies. Add `compose-ui-test-server` and `compose.uiTest`:
 
 ```kotlin
 kotlin {
     sourceSets {
         val desktopMain by getting {
             dependencies {
+                // Existing dependencies...
+
+                // Add these two:
                 implementation("io.github.forketyfork:compose-ui-test-server:0.1.0")
-                // Also need compose.uiTest for the test framework
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.uiTest)
             }
@@ -31,17 +49,36 @@ kotlin {
 }
 ```
 
-For projects using version catalogs, add to `libs.versions.toml`:
+**For projects using version catalogs**, add to `gradle/libs.versions.toml`:
 
 ```toml
 [libraries]
 compose-ui-test-server = { module = "io.github.forketyfork:compose-ui-test-server", version = "0.1.0" }
 ```
 
-### 2. Update the main function
+Then reference in `build.gradle.kts`:
 
-Replace the standard Compose Desktop `main()` with `runApplication`:
+```kotlin
+implementation(libs.compose.ui.test.server)
+```
 
+### Step 2: Update the main function
+
+Find the application's `main()` function (usually in `Main.kt` or similar). Replace the standard Compose Desktop launcher with `runApplication`:
+
+**Before** (typical Compose Desktop main):
+```kotlin
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
+
+fun main() = application {
+    Window(onCloseRequest = ::exitApplication, title = "My App") {
+        App()
+    }
+}
+```
+
+**After** (with agent control support):
 ```kotlin
 import io.github.forketyfork.composeuittest.WindowConfig
 import io.github.forketyfork.composeuittest.runApplication
@@ -58,9 +95,11 @@ fun main() =
     }
 ```
 
-### 3. Add test tags to UI elements
+The app now runs normally by default, but supports agent control when launched with `-Dcompose.ui.test.server.enabled=true`.
 
-For agents to interact with UI elements, add test tags:
+### Step 3: Add test tags to UI elements
+
+For agents to interact with specific UI elements, add test tags:
 
 ```kotlin
 import androidx.compose.ui.Modifier
@@ -80,41 +119,18 @@ TextField(
 )
 ```
 
-## Discovering Server Support
-
-Check if the project uses this library:
-
-```bash
-grep -r "compose-ui-test-server\|composeuittest\|runApplication\|startTestServer" --include="*.gradle*" --include="*.kt" .
-```
-
-Look for:
-- Dependency on `compose-ui-test-server` module
-- Imports from `io.github.forketyfork.composeuittest`
-- Calls to `runApplication`, `startTestServer`, or `startTestServerIfEnabled`
-
 ## Starting the Application
 
-### Standard launcher (recommended):
-
 ```bash
-# Normal mode
+# Normal mode (no server)
 ./gradlew run
 
-# Agent-controlled mode
+# Agent-controlled mode (server enabled)
 ./gradlew run -Dcompose.ui.test.server.enabled=true
 
-# With custom port
+# With custom port (default is 54345)
 ./gradlew run -Dcompose.ui.test.server.enabled=true -Dcompose.ui.test.server.port=8080
 ```
-
-### If a dedicated Gradle task exists:
-
-```bash
-./gradlew runInteractiveTest
-```
-
-Default port is **54345**.
 
 ## Verifying the Server
 
@@ -167,14 +183,14 @@ curl "http://localhost:54345/captureScreenshot?path=/tmp/result.png"
 
 ## Finding Test Tags
 
-Search the codebase for test tags:
+Search the codebase for existing test tags:
 
 ```bash
 grep -r "testTag\|Modifier.testTag" --include="*.kt" .
 ```
 
-Also check project documentation:
-- `CLAUDE.md`
+Also check:
+- `CLAUDE.md` for documented test tags
 - Test files in `src/*Test/` directories
 
 ## Important Notes
@@ -183,7 +199,7 @@ Also check project documentation:
 - **Use `waitForIdle`** between operations for stability
 - **Check HTTP status codes**: 200=success, 400=bad request, 500=error
 - **Use appropriate timeouts** for waits (default 5000ms may be too short)
-- Screenshots use absolute paths
+- Screenshots require absolute paths
 
 ## Error Handling
 
